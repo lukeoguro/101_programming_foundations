@@ -31,9 +31,9 @@ loop do
     end
   end
 
-  computer_choice = ['rock', 'paper', 'scissors'].sample
+  computer_choice = VALID_CHOICES.sample
 
-  Kernel.puts("You chose: #{choice}; Computer chose: #{computer_choice}")
+  prompt("You chose: #{choice}; Computer chose: #{computer_choice}")
 
   display_results(choice, computer_choice)
 
