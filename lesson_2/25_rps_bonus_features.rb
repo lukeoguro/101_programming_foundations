@@ -14,6 +14,8 @@ ABBREVIATIONS = {
   l: :lizard
 }
 
+WIN_SCORE = 5
+
 def clear_screen
   system('clear') || system('cls')
 end
@@ -47,7 +49,7 @@ def display_score(score)
 end
 
 def display_grand_winner(score)
-  if score[:player] == 5
+  if score[:player] == WIN_SCORE
     prompt("You are the GRAND WINNER! Congratulations!")
   else
     prompt("The computer is the GRAND WINNER. Better luck next time.")
@@ -59,7 +61,7 @@ def display_goodbye_message
 end
 
 def game_over?(score)
-  score[:player] == 5 || score[:computer] == 5
+  score[:player] == WIN_SCORE || score[:computer] == WIN_SCORE
 end
 
 def win?(first_choice, second_choice)
