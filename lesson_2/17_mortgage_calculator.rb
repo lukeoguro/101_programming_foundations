@@ -126,11 +126,13 @@ loop do
                                          monthly_interest,
                                          total_months)
 
-  output_message = "Results for a loan of #{format_cash(loan_amount)} "\
-  "at #{format_percent(apr)} APR over #{year} year(s) and #{month} month(s):\n"\
-  "Monthly interest: #{format_percent(monthly_interest)}\n"\
-  "Number of payments: #{total_months}\n"\
-  "Monthly payment: #{format_cash(monthly_payment)}\n"
+  output_message = <<~MSG
+    Results for a loan of #{format_cash(loan_amount)} at \
+    #{format_percent(apr)} APR over #{year} year(s) and #{month} month(s):
+    Monthly interest: #{format_percent(monthly_interest)}
+    Number of payments: #{total_months}
+    Monthly payment: #{format_cash(monthly_payment)}
+  MSG
 
   format_and_prompt(output_message)
 
