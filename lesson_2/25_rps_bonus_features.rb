@@ -16,6 +16,8 @@ ABBREVIATIONS = {
 
 WIN_SCORE = 5
 
+VALID_YES_NO = ['y', 'yes', 'n', 'no']
+
 def clear_screen
   system('clear') || system('cls')
 end
@@ -25,9 +27,12 @@ def prompt(message)
 end
 
 def display_welcome_message
-  prompt("Welcome to Rock Paper Scissors Lizard Spock!\n"\
-    "You will play the computer and each round will be a win, loss, or tie.\n"\
-    "The first to win 5 rounds is the grand winner. Good luck!")
+  welcome_message = <<~MSG
+    Welcome to Rock Paper Scissors Lizard Spock!
+    You will play the computer and each round will be a win, loss, or tie.
+    The first to win 5 rounds is the grand winner. Good luck!
+  MSG
+  prompt(welcome_message)
 end
 
 def display_choices(player_choice, computer_choice)
@@ -83,7 +88,7 @@ end
 def get_player_choice
   loop do
     prompt("Choose one: (r)ock, (p)aper, (s)cissors, spoc(k), (l)izard")
-    player_choice = gets.chomp.downcase.to_sym
+    player_choice = gets.chomp.downcase.strip.to_sym
     if GAME_LOGIC.keys.include?(player_choice)
       return player_choice
     elsif ABBREVIATIONS.keys.include?(player_choice)
@@ -96,11 +101,9 @@ end
 def get_play_again
   loop do
     prompt("Would you like to play again? (Y/N)")
-    play_again = gets.chomp.downcase
-    if play_again == "yes" || play_again == "y"
-      return true
-    elsif play_again == "no" || play_again == "n"
-      return false
+    play_again = gets.chomp.strip.downcase
+    if VALID_YES_NO.include?(play_again)
+      return play_again.start_with?('y')
     end
     prompt("Please enter Y/N.")
   end
