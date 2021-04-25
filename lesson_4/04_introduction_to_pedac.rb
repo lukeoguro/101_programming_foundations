@@ -60,9 +60,9 @@ ALGORITHM:
 - return result array
 
 EXAMPLE for #substrings:
-"halo" => [ "ha", "hal", "halo",  #slice(0, 2), #slice(0, 3), #slice(0, 4)    starting_index = 0, num_chars = 2...4
-            "al", "alo",          #slice(1, 2), #slice(1, 3)                  starting_index = 1, num_chars = 2...3
-            "lo" ]                #slice(2, 2)                                starting_index = 2, num_chars = 2...2
+"halo" => [ "ha", "hal", "halo",  #slice(0, 2), #slice(0, 3), #slice(0, 4)    starting_index = 0, num_chars = 2..4, ending_index = 2..4
+            "al", "alo",          #slice(1, 2), #slice(1, 3)                  starting_index = 1, num_chars = 2..3, ending_index = 3..4
+            "lo" ]                #slice(2, 2)                                starting_index = 2, num_chars = 2..2, ending_index = 4..4
 
 ALGORITHM for #substrings:
 - create an empty `result` array
@@ -73,6 +73,20 @@ ALGORITHM for #substrings:
     - call #slice(`starting_index`, `num_chars`) onto initial string
     - append result to empty `result` array
     - `num_chars` += 1
+  - end inner loop
+  - `starting_index` += 1
+- end outer loop
+- return `result`
+
+ALTERNATIVE ALGORITHM for #substrings:
+- create an empty `result` array
+- initialize `starting_index` variable at (0)
+- begin outer loop that iterates `starting_index` to (length - 2)
+  - initialize `ending_index` variable at (`starting_index` + 2)
+  - begin inner loop that iterates `starting_index` to length
+    - call #slice(`starting_index`...`ending_index`)
+    - append result to empty `result` array
+    - `ending_index` += 1
   - end inner loop
   - `starting_index` += 1
 - end outer loop
@@ -122,6 +136,21 @@ puts palindrome_substrings("") == []
 #     (2..(str.length - starting_index)).each do |num_chars|
 #       result_arr << str.slice(starting_index, num_chars)
 #     end
+#   end
+#   result_arr
+# end
+
+# Note: Alternative #substrings method
+# def substrings(str)
+#   result_arr = []
+#   starting_index = 0
+#   while starting_index <= str.size - 2
+#     ending_index = starting_index + 2
+#     while ending_index <= str.size
+#       result_arr << str[starting_index...ending_index]
+#       ending_index += 1
+#     end
+#     starting_index += 1
 #   end
 #   result_arr
 # end
