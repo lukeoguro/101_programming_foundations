@@ -20,14 +20,15 @@ inter: hash that converts 4 => '4'
 output: string
 
 ALGORITHM
-Given an input integer `integer`
-Create an hash called `conversion`
-Init empty string `string`
-Iterate (#until) integer == 0
-  string << conversion[integer % 10]
-  integer / 10
-End iteration
-string.reverse
+Given an integer named `integer`
+Create a hash called `CONVERSION`
+Create empty string called `string`
+Begin loop
+  Prepend CONVERSION[`integer` % 10] to `string`
+  `integer` /= 10
+  break if `integer` becomes 0
+End loop
+
 =end
 
 CONVERSION = {0=>"0", 1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9"}
@@ -35,11 +36,11 @@ CONVERSION = {0=>"0", 1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=
 def integer_to_string(integer)
   string = ''
   loop do
-    string << CONVERSION[integer % 10]
+    string.prepend(CONVERSION[integer % 10])
     integer /= 10
     break if integer == 0
   end
-  string.reverse
+  string
 end
 
 puts integer_to_string(4321) == '4321'

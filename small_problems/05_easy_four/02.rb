@@ -6,15 +6,13 @@ New centuries begin in years that end with 01. So, the years 1901-2000 comprise 
 
 PROBLEM
 input: integer (year)
-output: string (century number + appropriate string value)
+output: string (string representation of century number)
 explicit:
   write a method
-  return a string that begins with the century number and ends with the appropriate string
+  return a string that begins with the century number, nd ends with the appropriate ordinal indicator
 implicit:
-  each century begins with '01'. (ex: years 1901-2000 -> 20th century)
-  what is the range of the years?
-  can we assume that the integer is positive?
-  what is a century? (100 years)
+  new centuries begin in years that end with 01 (ex: 1901-2000 is the 20th century)
+  a century is 100 years
 
 TEST CASES
 century(2000) == '20th'
@@ -28,38 +26,36 @@ century(1127) == '12th'
 century(11201) == '113th'
 
 BREAKDOWN
-1-100 -> 1st century
-101-200 -> 2nd century
-201-300 -> 3rd century
-
-DATA STRUCTURE:
-input: integer (year)
-inter: NA
-output: string
+century, remainder = year.divmod(100)
+if remainder is greater than 0, add 1 to century
+-st: if number ends with 1 (unless tenth value is 1)
+-nd: if number ends with 2 (unless tenth value is 1)
+-rd: if number ends with 3 (unless tenth value is 1)
+-th: else
 
 ALGORITHM
-Given an integer (`year`)
-Call `#divmod` onto `year` with argument 100, and assign results to `century`, `remainder`
-If `remainder` greater or equal to 1, add 1 to `century`
-If `century` % 100 / 10 is equal to 1: "#{century}th"
-Case statement `century` % 10
-  when 1 then: "#{century}st"
-  when 2 then: "#{century}nd"
-  when 3 then: "#{century}rd"
-  else then:   "#{century}th"
-end
+Given an integer called `year`
+Call #divmod on `year`, pass return values as `century` and `remainder`
+If `remainder` is greater than 0, add 1 to `century`
+return `century` + -th if century / 10 % 10 == 1
+Case statement of century % 10
+  when 1 then add -st
+  when 2 then add -nd
+  when 3 then add -rd
+  else        add -th
+End case statement
 
 =end
 
 def century(year)
   century, remainder = year.divmod(100)
-  century += 1 if remainder >= 1
-  return "#{century}th" if century % 100 / 10 == 1
-  case (century % 10)
+  century += 1 if remainder > 0
+  return "#{century}th" if century / 10 % 10 == 1
+  case century % 10
   when 1 then "#{century}st"
   when 2 then "#{century}nd"
   when 3 then "#{century}rd"
-  else "#{century}th"
+  else        "#{century}th"
   end
 end
 

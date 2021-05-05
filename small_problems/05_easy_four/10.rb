@@ -9,31 +9,38 @@ TEST CASES
 signed_integer_to_string(4321) == '+4321'
 signed_integer_to_string(-123) == '-123'
 signed_integer_to_string(0) == '0'
+
+ALGORITHM
+Given an integer `integer`
+If `integer` > 0
+  '+' + integer_to_string(`integer`)
+elsif `integer` < 0
+  '-' + integer_to_string(-`integer`)
+else
+  integer_to_string(`integer`)
+end
 =end
+
 
 CONVERSION = {0=>"0", 1=>"1", 2=>"2", 3=>"3", 4=>"4", 5=>"5", 6=>"6", 7=>"7", 8=>"8", 9=>"9"}
 
 def integer_to_string(integer)
   string = ''
   loop do
-    string << CONVERSION[integer % 10]
+    string.prepend(CONVERSION[integer % 10])
     integer /= 10
     break if integer == 0
   end
-  string.reverse
+  string
 end
 
 def signed_integer_to_string(integer)
-  negative = integer.negative?
-  integer *= -1 if negative
-
-  integer_string = integer_to_string(integer)
-  if negative
-    integer_string.prepend("-")
-  elsif integer.positive?
-    integer_string.prepend("+")
+  if integer > 0
+    '+' + integer_to_string(integer)
+  elsif integer < 0
+    '-' + integer_to_string(-integer)
   else
-    integer_string
+    integer_to_string(integer)
   end
 end
 

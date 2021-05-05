@@ -26,9 +26,10 @@ output: integer
 
 ALGORITHM
 Given integer `supplied_number`
-Array `multiples` equals Loop (selection method `#select`): `number` in (1..`supplied_number`)
+Loop (selection with `#select`) on (1..`supplied_number`), where each element is `number`
   Select if multiple of 3 or 5
 end
+Assign return value (Array) to variable `multiples`
 `multiples.sum`
 
 =end

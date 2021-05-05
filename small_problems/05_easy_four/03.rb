@@ -33,35 +33,29 @@ leap_year?(1) == false
 leap_year?(100) == false
 leap_year?(400) == true
 
+BREAKDOWN
+If it's divisible by 400, it is also divisible by 100 and 4
+If it's divisible by 100, it is also divisible by 4
+
 ALGORITHM
 Given an integer `year`
-If divisible by 4
-  If divisible by 100
-    If divisible by 400
-      true
-    else
-      false
-  else
-    true
+If divisible by 400
+  return leap year
+elsif divisible by 100
+  return not a leap year
 else
-  false
+  true false of divisible by 4
 end
 
 =end
 
 def leap_year?(year)
-  if year % 4 == 0
-    if year % 100 == 0
-      if year % 400 == 0
-        true
-      else
-        false
-      end
-    else
-      true
-    end
-  else
+  if year % 400 == 0
+    true
+  elsif year % 100 == 0
     false
+  else
+    year % 4 == 0
   end
 end
 
