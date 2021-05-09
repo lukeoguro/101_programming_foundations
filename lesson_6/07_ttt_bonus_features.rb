@@ -1,5 +1,3 @@
-require 'pry'
-
 WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] + # rows
                 [[1, 4, 7], [2, 5, 8], [3, 6, 9]] + # columns
                 [[1, 5, 9], [3, 5, 7]]              # diagonals
@@ -10,6 +8,8 @@ INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
 WIN_SCORE = 5
+BOARD_SIZE = 3
+CENTER_SQUARE = 5
 
 VALID_YES_NO = ['y', 'yes', 'n', 'no']
 
@@ -126,12 +126,6 @@ def empty_squares(board)
   board.keys.select { |num| board[num] == INITIAL_MARKER }
 end
 
-def find_at_risk_square(line, board, marker)
-  if board.values_at(*line).count(marker) == 2
-    line.select { |k| board[k] == " " }.first
-  end
-end
-
 def gets_player_choice(board)
   loop do
     prompt "Choose a square (#{joinor(empty_squares(board))}):"
@@ -141,24 +135,20 @@ def gets_player_choice(board)
   end
 end
 
+def find_third_square(board, marker)
+  WINNING_LINES.each do |line|
+    if board.values_at(*line).count(marker) == (BOARD_SIZE - 1)
+      line.each { |square| return square if board[square] == INITIAL_MARKER }
+    end
+  end
+  nil
+end
+
 def calc_computer_choice(board)
-  # Offense
-  WINNING_LINES.each do |line|
-    square = find_at_risk_square(line, board, COMPUTER_MARKER)
-    return square if square
-  end
-
-  # Defense
-  WINNING_LINES.each do |line|
-    square = find_at_risk_square(line, board, PLAYER_MARKER)
-    return square if square
-  end
-
-  # Pick square #5 if available
-  return 5 if empty_squares(board).include?(5)
-
-  # Choose randomly
-  empty_squares(board).sample
+  square ||= find_third_square(board, COMPUTER_MARKER)
+  square ||= find_third_square(board, PLAYER_MARKER)
+  square ||= CENTER_SQUARE if empty_squares(board).include?(CENTER_SQUARE)
+  square || empty_squares(board).sample
 end
 
 def place_piece!(board, current_player)
@@ -177,9 +167,9 @@ end
 
 def detect_round_winner(board)
   WINNING_LINES.each do |line|
-    if board.values_at(*line).count(PLAYER_MARKER) == 3
+    if board.values_at(*line).count(PLAYER_MARKER) == BOARD_SIZE
       return :player
-    elsif board.values_at(*line).count(COMPUTER_MARKER) == 3
+    elsif board.values_at(*line).count(COMPUTER_MARKER) == BOARD_SIZE
       return :computer
     end
   end
