@@ -129,8 +129,8 @@ end
 def gets_player_choice(board)
   loop do
     prompt "Choose a square (#{joinor(empty_squares(board))}):"
-    square = gets.chomp.to_i
-    return square if empty_squares(board).include?(square)
+    user_input = gets.chomp.to_i
+    return user_input if empty_squares(board).include?(user_input)
     prompt "Sorry, that's not a valid choice."
   end
 end
