@@ -25,7 +25,7 @@ def display_welcome_message
   welcome_message = <<~MSG
     Welcome to command line Tic Tac Toe!
     You will play the computer and each round will be a win, loss, or tie.
-    The first to win 5 rounds is the grand winner. Good luck!
+    The first to win #{WIN_SCORE} rounds is the grand winner. Good luck!
   MSG
   prompt(welcome_message)
 end
@@ -80,24 +80,28 @@ def joinor(arr, delimiter=', ', word='or')
   end
 end
 
+def valid_number?(user_input)
+  user_input.to_i.to_s == user_input
+end
+
 def gets_starting_player
   loop do
-    starting_player_msg = <<~MSG
-      Choose who goes first in every round this game:
-      1) Player, 2) Computer, 3) Random
-    MSG
+    starting_player_msg = "Choose who goes first in every round this game:\n"\
+      "1) Player, 2) Computer, 3) Random"
     prompt(starting_player_msg)
-    user_input = gets.chomp.strip.to_i
-    if (1..2).include?(user_input)
-      return PLAYERS[user_input - 1]
-    elsif user_input == 3
-      return PLAYERS.sample
+    user_input = gets.chomp.strip
+    if valid_number?(user_input)
+      if (1..2).include?(user_input.to_i)
+        return PLAYERS[user_input.to_i - 1]
+      elsif user_input.to_i == 3
+        return PLAYERS.sample
+      end
     end
     prompt("That's not a valid choice.")
   end
 end
 
-def gets_continue_game
+def continue_game?
   loop do
     prompt("Press any key to continue, or 'Q' to quit the game early.")
     user_input = gets.chomp.strip.downcase
@@ -105,7 +109,7 @@ def gets_continue_game
   end
 end
 
-def gets_play_again
+def play_again?
   loop do
     prompt("Would you like to play the game again? (Y/N)")
     user_input = gets.chomp.strip.downcase
@@ -129,8 +133,9 @@ end
 def gets_player_choice(board)
   loop do
     prompt "Choose a square (#{joinor(empty_squares(board))}):"
-    user_input = gets.chomp.to_i
-    return user_input if empty_squares(board).include?(user_input)
+    user_input = gets.chomp.strip
+    return user_input.to_i if empty_squares(board).include?(user_input.to_i) \
+      && valid_number?(user_input)
     prompt "Sorry, that's not a valid choice."
   end
 end
@@ -221,12 +226,12 @@ loop do
     play_round(board, starting_player, score)
 
     break if game_over?(score)
-    break unless gets_continue_game
+    break unless continue_game?
   end
 
   if game_over?(score)
     display_grand_winner(score)
-    next if gets_play_again
+    next if play_again?
   end
 
   break
