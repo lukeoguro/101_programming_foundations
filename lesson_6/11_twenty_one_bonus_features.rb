@@ -69,7 +69,7 @@ def total(hand)
       total += COURTS_VALUE
     end
   end
-  ranks.count("A").times do
+  ranks.count(ACE).times do
     total += ace_value(total)
   end
   total
@@ -87,29 +87,25 @@ def initialize_round
   return deck, hands, totals
 end
 
-def format_card(card)
-  "[#{card[:rank]}#{card[:suit]}]"
-end
-
-def join_cards(cards)
+def format_cards(cards)
   cards.map { |card| "[#{card[:rank]}#{card[:suit]}]" }.join(' ')
 end
 
 def display_hands(hands, totals, show_dealer=true)
   clear_screen
   if show_dealer
-    prompt "Dealer: #{join_cards(hands[:dealer])} => #{totals[:dealer]}"
+    prompt "Dealer: #{format_cards(hands[:dealer])} => #{totals[:dealer]}"
   else
-    prompt "Dealer: #{format_card(hands[:dealer].first)} [  ]"
+    prompt "Dealer: #{format_cards([hands[:dealer].first])} [  ]"
   end
-  prompt "Player: #{join_cards(hands[:player])} => #{totals[:player]}"
+  prompt "Player: #{format_cards(hands[:player])} => #{totals[:player]}"
 end
 
 def display_player_turn_message(hand)
   message = if hand.size == 2
               "The dealer has dealt the initial cards."
             else
-              "You chose to hit and drew #{format_card(hand.last)}."
+              "You chose to hit and drew #{format_cards([hand.last])}."
             end
   prompt(message, true)
 end
@@ -155,9 +151,12 @@ def display_dealer_turn_message(hand)
   num_hits = hand.size - 2
   message = if num_hits == 0
               "The dealer chose not to hit."
+            elsif num_hits == 1
+              "The dealer chose to hit #{num_hits} time "\
+              "and drew #{format_cards([hand.last])}."
             else
-              "The dealer chose to hit #{num_hits} time(s) "\
-              "and drew #{join_cards(hand[2..-1])}."
+              "The dealer chose to hit #{num_hits} times "\
+              "and drew #{format_cards(hand[2..-1])}."
             end
   prompt(message, true)
 end
