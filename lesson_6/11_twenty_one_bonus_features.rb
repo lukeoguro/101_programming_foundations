@@ -14,6 +14,8 @@ ROUNDS_TO_WIN = 5
 
 VALID_YES_NO = ['y', 'yes', 'n', 'no']
 
+MOVE_CHOICES = { hit: 1, stay: 2 }
+
 def clear_screen
   system('clear') || system('cls')
 end
@@ -30,7 +32,7 @@ def display_welcome_message
     as possible without going over.
     You will play the dealer and each round will be a win, loss or tie.
     The first to win #{ROUNDS_TO_WIN} rounds is the champion. Good luck!
-    Press any key to continue:
+    Press enter to continue:
   MSG
   prompt(welcome_message)
   gets.chomp
@@ -59,6 +61,13 @@ def ace_value(total)
   total + ACE_VALUE.max <= TARGET_VALUE ? ACE_VALUE.max : ACE_VALUE.min
 end
 
+def adjust_for_aces(ranks, total)
+  ranks.count(ACE).times do
+    total += ace_value(total)
+  end
+  total
+end
+
 def total(hand)
   ranks = hand.map { |card| card[:rank] }
   total = 0
@@ -69,10 +78,7 @@ def total(hand)
       total += COURTS_VALUE
     end
   end
-  ranks.count(ACE).times do
-    total += ace_value(total)
-  end
-  total
+  adjust_for_aces(ranks, total)
 end
 
 def initialize_round
@@ -116,9 +122,11 @@ end
 
 def gets_player_choice
   loop do
-    prompt "Press '1' to hit, '2' to stay:"
+    prompt "Press '#{MOVE_CHOICES[:hit]}' to hit, "\
+    "'#{MOVE_CHOICES[:stay]}' to stay:"
     input = gets.chomp.strip
-    return input.to_i if (1..2).include?(input.to_i) && valid_number?(input)
+    return input.to_i if MOVE_CHOICES.values.include?(input.to_i) &&
+                         valid_number?(input)
     prompt "Sorry, that's not a valid choice."
   end
 end
@@ -132,11 +140,11 @@ def player_turn(deck, hands, totals)
     display_hands(hands, totals, false)
     display_player_turn_message(hands[:player])
     player_choice = gets_player_choice
-    if player_choice == 1
+    if player_choice == MOVE_CHOICES[:hit]
       hands[:player] << deck.pop
       totals[:player] = total(hands[:player])
     end
-    break if player_choice == 2 || busted?(totals[:player])
+    break if player_choice == MOVE_CHOICES[:stay] || busted?(totals[:player])
   end
 end
 
@@ -162,30 +170,32 @@ def display_dealer_turn_message(hand)
 end
 
 def display_round_result(totals)
-  message = if busted?(totals[:player])
+  player_total, dealer_total = totals.values
+  message = if busted?(player_total)
               "You busted, dealer wins."
-            elsif busted?(totals[:dealer])
+            elsif busted?(dealer_total)
               "Dealer busts, you win!"
-            elsif totals[:player] > totals[:dealer]
+            elsif player_total > dealer_total
               "You have the better score "\
-              "(#{totals[:player]} > #{totals[:dealer]}). You win!"
-            elsif totals[:player] < totals[:dealer]
+              "(#{player_total} > #{dealer_total}). You win!"
+            elsif player_total < dealer_total
               "Dealer had the better score "\
-              "(#{totals[:dealer]} > #{totals[:player]}). Dealer wins!"
+              "(#{dealer_total} > #{player_total}). Dealer wins!"
             else
-              "The scores are even at #{totals[:dealer]}. It's a tie."
+              "The scores are even at #{dealer_total}. It's a tie."
             end
   prompt(message)
 end
 
 def log_score(totals, score)
-  if busted?(totals[:dealer])
+  player_total, dealer_total = totals.values
+  if busted?(dealer_total)
     score[:player] += 1
-  elsif busted?(totals[:player])
+  elsif busted?(player_total)
     score[:dealer] += 1
-  elsif totals[:player] > totals[:dealer]
+  elsif player_total > dealer_total
     score[:player] += 1
-  elsif totals[:player] < totals[:dealer]
+  elsif player_total < dealer_total
     score[:dealer] += 1
   end
 end
@@ -213,7 +223,7 @@ end
 
 def continue_current_game?
   loop do
-    prompt "Press any key to continue, or 'Q' to quit the game early."
+    prompt "Press enter to continue, or 'Q' to quit the game early."
     user_input = gets.chomp.strip.downcase
     return user_input != 'q'
   end
